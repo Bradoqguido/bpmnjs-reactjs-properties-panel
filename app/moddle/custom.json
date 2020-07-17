@@ -1,0 +1,37 @@
+{
+  "name": "custom",
+  "uri": "http://custom/ns",
+  "associations": [],
+  "types": [
+    {
+      "name": "descriptionHolder",
+      "extends": [
+        "bpmn:ServiceTask"
+      ],
+      "properties": [
+        {
+          "name": "description",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "businessRuleHolder",
+      "extends": [
+        "bpmn:ServiceTask"
+      ],
+      "properties": [
+        {
+          "name": "businessrule",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    }
+  ],
+  "prefix": "custom",
+  "xml": {
+    "tagAlias": "lowerCase"
+  }
+}
