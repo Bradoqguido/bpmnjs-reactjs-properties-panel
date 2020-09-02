@@ -4,6 +4,10 @@ import React, { Component } from 'react';
 
 import './PropertiesView.css';
 
+/// CSS COMPONENTS
+import '../css-components/button.css';
+import '../css-components/input.css';
+
 export default class PropertiesView extends Component {
 
   constructor(props) {
@@ -15,30 +19,39 @@ export default class PropertiesView extends Component {
     };
   }
 
+  /// Evento proprio do reactJS.
+  /// Depois do construtor, ele é o proximo da fila de execução.
   componentDidMount() {
 
     const {
       modeler
     } = this.props;
 
-    modeler.on('selection.changed', (e) => {
+    /// Método do modeler provisionado pela bpmnjs
+    /// O primeiro parametro é o evento que será executado
+    /// O segundo parametro é o elemento retornado do evento
+    modeler.on('selection.changed', (pElemento) => {
 
+      /// Esse atributo element é padrão do modeler, não alterar.
       const {
         element
       } = this.state;
 
       this.setState({
-        selectedElements: e.newSelection,
-        element: e.newSelection[0]
+        selectedElements: pElemento.newSelection,
+        element: pElemento.newSelection[0]
       });
     });
 
+    /// Método do modeler provisionado pela bpmnjs
+    /// O primeiro parametro é o evento que será executado
+    /// O segundo parametro é o elemento retornado do evento
+    modeler.on('element.changed', (pElemento) => {
 
-    modeler.on('element.changed', (e) => {
-
+      /// Esse atributo element é padrão do modeler, não alterar.
       const {
         element
-      } = e;
+      } = pElemento;
 
       const {
         element: currentElement
@@ -48,7 +61,7 @@ export default class PropertiesView extends Component {
         return;
       }
 
-      // update panel, if currently selected element changed
+      /// Atualiza o panel, se o elemento selecionado atualmente mudar
       if (element.id === currentElement.id) {
         this.setState({
           element
@@ -58,6 +71,7 @@ export default class PropertiesView extends Component {
     });
   }
 
+  /// Função que renderiza o html da página conforme funcionalidades
   render() {
 
     const {
@@ -69,17 +83,22 @@ export default class PropertiesView extends Component {
       element
     } = this.state;
 
+    /// HTML retornado, com os demais components
     return (
       <div>
         {
-          /* inserir o popup aqui*/
           selectedElements.length === 1
             && <ElementProperties modeler={ modeler } element={ element } />
         }
 
         {
           selectedElements.length === 0
-            && <span>Selecione um elemento para edita-lo.</span>
+            &&  <div>
+                  {
+                    //button onClick={ exportDiagram(modeler) }>Download</button>
+                  }
+                  <span>Selecione um elemento para edita-lo.</span>
+                </div>
         }
 
         {
@@ -90,10 +109,9 @@ export default class PropertiesView extends Component {
       </div>
     );
   }
-
 }
 
-
+/// Component das propriedades do elemento
 function ElementProperties(props) {
   let {
     element,
@@ -130,7 +148,7 @@ function ElementProperties(props) {
   }
 
   
-  /// Faz do serviço selecionado uma tarefa de serviço
+  /// Faz da tarefa selecionada uma tarefa de serviço
   function makeServiceTask(name) {
     const bpmnReplace = modeler.get('bpmnReplace');
 
@@ -139,8 +157,26 @@ function ElementProperties(props) {
     });
   }
 
-  let txtName, txtDescription, txtBusinessRule;
+  /// Não remover inicializadores, eles definem o tipo de dado original da variável.
+  let txtName = '', txtDescription = '', txtBusinessRule = '';
 
+  /// Salva os valores nos campos correspondentes, SE o tamanho da variável for maior que 0,
+  /// o que simboliza uma edição no campo.
+  function salvar() {
+    if (txtName.length > 0) {
+      updateName(txtName);
+    }
+
+    if (txtDescription.length > 0) {
+      updateDescription(txtDescription);
+    }
+
+    if (txtBusinessRule.length > 0) {
+      updateBusinessRule(txtBusinessRule);
+    }
+  }
+
+  /// Retorna o HTML do component
   return (
     <div id="elementProperties" className="element-properties popup" key={ element.id }>    
       <div className="popup_inner">
@@ -148,16 +184,16 @@ function ElementProperties(props) {
           <label>id</label>
           <span>{ element.id }</span>
         </div>*/}
-
+        
         { /* Campo: titulo da tarefa */ }
         <div className="field">
           <label>Tarefa</label>
           <div>
-            <input value={ element.businessObject.name || '' } 
-                      onChange={ (event) => {
-                        updateName(event.target.value)
-                      } 
-                    } />
+            <input input={ txtName } 
+                    placeholder={ element.businessObject.name }
+                    onChange={ (event) => {
+                      txtName = event.target.value;
+                    }} />
           </div>
         </div>
 
@@ -166,11 +202,11 @@ function ElementProperties(props) {
             <div className='field'>
               <label>Descrição</label>
               <div>
-                <input value={ element.businessObject.get('custom:description') } 
-                          onChange={ (event) => {
-                            updateDescription(event.target.value)
-                          } 
-                        } />
+                <input  input= { txtDescription } 
+                        placeholder={ element.businessObject.get('custom:description') } 
+                        onChange={ (event) => {
+                          txtDescription = event.target.value;
+                        }} />
               </div>
             </div>
         }
@@ -180,11 +216,11 @@ function ElementProperties(props) {
             <div className='field'>
               <label>Comando</label>
               <div>
-                  <textarea value={ element.businessObject.get('custom:businessrule') } 
-                              onChange={ (event) => {
-                                updateBusinessRule(event.target.value)
-                              } 
-                            } />
+                  <textarea input= { txtBusinessRule } 
+                            placeholder={ element.businessObject.get('custom:businessrule') } 
+                            onChange={ (event) => {
+                              txtBusinessRule = event.target.value;
+                            }} />
               </div>
             </div>
         }
@@ -204,9 +240,16 @@ function ElementProperties(props) {
           onClick={() => {
             var x = document.getElementById("elementProperties");
             x.style.display = "none";
+            salvar();
           }}> Salvar
         </button>
 
+        <button
+          onClick={() => {
+            var x = document.getElementById("elementProperties");
+            x.style.display = "none";
+          }}> Fechar
+        </button>
       </div>
     </div>
   );

@@ -31,3 +31,22 @@ const propertiesPanel = new PropertiesPanel({
 });
 
 modeler.importXML(diagramXML);
+
+async function openDiagram(xml) {
+  modeler.importXML(xml).catch(err => {
+    console.log(err);
+  });
+}
+
+
+/**
+ * Load snippet, display code and show resulting diagram.
+ *
+ * @param {Function} fn
+ * @param {String} diagram
+ */
+function exportDiagram(diagram) {
+  openDiagram(diagram).then(() => {
+    modeler.saveXML({ format: true }).then(({ xml }) => console.info(xml));
+  });
+}
