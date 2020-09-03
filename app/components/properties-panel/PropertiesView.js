@@ -5,8 +5,8 @@ import React, { Component } from 'react';
 import './PropertiesView.css';
 
 /// CSS COMPONENTS
-import '../css-components/button.css';
-import '../css-components/input.css';
+import '../components-global-styles/button.css';
+import '../components-global-styles/input.css';
 
 export default class PropertiesView extends Component {
 
@@ -74,6 +74,26 @@ export default class PropertiesView extends Component {
   /// Função que renderiza o html da página conforme funcionalidades
   render() {
 
+    async function exportDiagram() {
+      try {
+  
+        var xml = await modeler.saveXML({ format: true });
+  
+        //alert('Diagrama exportado!');
+  
+        console.log('DIAGRAM', xml);
+
+        var btnDownload = document.getElementById("btnDownload");
+        var file = new Blob([xml], {type: 'text/xml'});
+        btnDownload.href = URL.createObjectURL(file);
+        btnDownload.download = 'diagram.bpmn';
+
+      } catch (err) {
+  
+        console.error('could not save BPMN 2.0 diagram', err);
+      }
+    }
+
     const {
       modeler
     } = this.props;
@@ -93,9 +113,11 @@ export default class PropertiesView extends Component {
 
         {
           selectedElements.length === 0
-            &&  <div>
+            &&  <div className="btnDownload">
                   {
-                    //button onClick={ exportDiagram(modeler) }>Download</button>
+                    /// Não use exportDiagram() porque o reactjs não reconhece os ().
+                    /// https://upmostly.com/tutorials/react-onclick-event-handling-with-examples#:~:text=In React%2C the onClick handler,Function After Clicking a Button
+                    <a className="button" id="btnDownload" onClick={exportDiagram}>Download</a>
                   }
                   <span>Selecione um elemento para edita-lo.</span>
                 </div>

@@ -101,4 +101,75 @@ npm start
 ## License
 
 MIT
-# bpmnjs-reactjs-properties-panel
+
+
+# Dev Notes
+
+- 0.1
+Update this function saveXML() on node_modules\bpmn-js\lib\Viewer.js
+With return and done function, as the same we have here, if you want to export the xml.
+/**
+ * Export the currently displayed BPMN 2.0 diagram as
+ * a BPMN 2.0 XML document.
+ *
+ * ## Life-Cycle Events
+ *
+ * During XML saving the viewer will fire life-cycle events:
+ *
+ *   * saveXML.start (before serialization)
+ *   * saveXML.serialized (after xml generation)
+ *   * saveXML.done (everything done)
+ *
+ * You can use these events to hook into the life-cycle.
+ *
+ * @param {Object} [options] export options
+ * @param {Boolean} [options.format=false] output formated XML
+ * @param {Boolean} [options.preamble=true] output preamble
+ *
+ * @param {Function} done invoked with (err, xml)
+ */
+Viewer.prototype.saveXML = function(options, done) {
+
+  // Correção para "Fatal Error: done is not a functions".
+  done = done || function() {};
+
+  if (!done) {
+    done = options;
+    options = {};
+  }
+
+  var self = this;
+
+  var definitions = this._definitions;
+
+  if (!definitions) {
+    return done(new Error('no definitions loaded'));
+  }
+
+  // allow to fiddle around with definitions
+  definitions = this._emit('saveXML.start', {
+    definitions: definitions
+  }) || definitions;
+
+  return this._moddle.toXML(definitions, options, function(err, xml) {
+
+    try {
+      xml = self._emit('saveXML.serialized', {
+        error: err,
+        xml: xml
+      }) || xml;
+
+      self._emit('saveXML.done', {
+        error: err,
+        xml: xml
+      });
+    } catch (e) {
+      console.error('error in saveXML life-cycle listener', e);
+    }
+
+    done(err, xml);
+
+    return xml;
+  });
+
+};

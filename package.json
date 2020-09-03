@@ -7,8 +7,8 @@
     "start": "webpack-dev-server --open --watch"
   },
   "author": {
-    "name": "Jeferson Eduardo Guido",
-    "url": "https://github.com/bradoqguido"
+    "name": "Niklas Kiefer",
+    "url": "https://github.com/pinussilvestrus"
   },
   "repository": {
     "type": "git",
@@ -29,8 +29,6 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "serialize-javascript": ">=3.1.0",
-    "@material-ui/core": "^4.11.0",
     "bpmn-js": "^3.2.1",
     "downloadjs": "^1.4.7",
     "react": "^16.8.3",

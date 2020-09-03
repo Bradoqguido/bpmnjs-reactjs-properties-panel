@@ -3,7 +3,6 @@ import React from 'react';
 
 import PropertiesView from './PropertiesView';
 
-
 export default class PropertiesPanel {
 
   constructor(options) {
@@ -19,5 +18,3 @@ export default class PropertiesPanel {
     );
   }
 }
-
-
