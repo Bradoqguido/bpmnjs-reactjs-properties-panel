@@ -2,6 +2,8 @@ import { is } from 'bpmn-js/lib/util/ModelUtil';
 
 import React, { Component } from 'react';
 
+import diagramXML from '../../diagram.bpmn';
+
 import './PropertiesView.css';
 
 /// CSS COMPONENTS
@@ -19,7 +21,7 @@ export default class PropertiesView extends Component {
     };
   }
 
-  /// Evento proprio do reactJS.
+  /// [WI15141] Evento proprio do reactJS.
   /// Depois do construtor, ele é o proximo da fila de execução.
   componentDidMount() {
 
@@ -27,7 +29,7 @@ export default class PropertiesView extends Component {
       modeler
     } = this.props;
 
-    /// Método do modeler provisionado pela bpmnjs
+    /// [WI15141] Método do modeler provisionado pela bpmnjs
     /// O primeiro parametro é o evento que será executado
     /// O segundo parametro é o elemento retornado do evento
     modeler.on('selection.changed', (pElemento) => {
@@ -43,12 +45,12 @@ export default class PropertiesView extends Component {
       });
     });
 
-    /// Método do modeler provisionado pela bpmnjs
+    /// [WI15141] Método do modeler provisionado pela bpmnjs
     /// O primeiro parametro é o evento que será executado
     /// O segundo parametro é o elemento retornado do evento
     modeler.on('element.changed', (pElemento) => {
 
-      /// Esse atributo element é padrão do modeler, não alterar.
+      /// [WI15141] Esse atributo element é padrão do modeler, não alterar.
       const {
         element
       } = pElemento;
@@ -71,25 +73,58 @@ export default class PropertiesView extends Component {
     });
   }
 
-  /// Função que renderiza o html da página conforme funcionalidades
+  /// [WI15141] Função que renderiza o html da página conforme funcionalidades
   render() {
 
+    /// [WI15141] Importa o diagrama
+    async function importDiagram() {   
+      try {
+
+        // Pega a referência do input pelo ID.
+        var uploadedFile = document.getElementById('uploadFile');
+
+        var file = uploadedFile.files[0], // Pega o dado "cru" do arquivo.
+            reader = new FileReader(); // Cria um leitor de arquivos.
+        
+        // Faz o leitor carregar todo o arquivo e ao fim lê os dados do arquivo.
+        reader.onloadend = function(event) {
+          // captura o arquivo como texto
+          var text = event.target.result;
+          
+          // Adiciona ele no modelador
+          modeler.importXML(text);
+        }
+
+        // Lê o arquivo "cru" como texto.
+        reader.readAsText(file);
+
+      } catch (err) {
+        alert("Não foi possível, salvar o diagrama BPMN 2.0, situação encontrada: ", err);
+        console.error('could not save BPMN 2.0 diagram', err);
+      }
+    }
+
+    /// [WI15141] Função para exportar o diagrama como xml.
     async function exportDiagram() {
       try {
-  
-        var xml = await modeler.saveXML({ format: true });
-  
-        //alert('Diagrama exportado!');
-  
-        console.log('DIAGRAM', xml);
 
+        // [WI15141] Chama a função própria do modelador de bpmn, para montar o arquivo no padrão xml.
+        var xml = await modeler.saveXML({ format: true });
+
+        // Pega o Id do botão/link de download.
         var btnDownload = document.getElementById("btnDownload");
+
+        // Converte o arquivo para xml.
         var file = new Blob([xml], {type: 'text/xml'});
+
+        // Marca o botão como referência para baixar o xml.
         btnDownload.href = URL.createObjectURL(file);
+
+        // Define o nome do arquivo que será baixado.
         btnDownload.download = 'diagram.bpmn';
 
       } catch (err) {
-  
+        alert("Não foi possível, salvar o diagrama BPMN 2.0, situação encontrada: ", err);
         console.error('could not save BPMN 2.0 diagram', err);
       }
     }
@@ -103,7 +138,7 @@ export default class PropertiesView extends Component {
       element
     } = this.state;
 
-    /// HTML retornado, com os demais components
+    /// [WI15141] HTML retornado, com os demais components
     return (
       <div>
         {
@@ -113,9 +148,17 @@ export default class PropertiesView extends Component {
 
         {
           selectedElements.length === 0
-            &&  <div className="btnDownload">
+            &&  <div>
                   {
-                    /// Não use exportDiagram() porque o reactjs não reconhece os ().
+                    <input  id="uploadFile"
+                            className="input-file" type="file" name="my_file"
+                            onChange={ () => {
+                              importDiagram();
+                            }} />
+                  }
+
+                  {
+                    /// [WI15141] Não use exportDiagram() porque o reactjs não reconhece os ().
                     /// https://upmostly.com/tutorials/react-onclick-event-handling-with-examples#:~:text=In React%2C the onClick handler,Function After Clicking a Button
                     <a className="button" id="btnDownload" onClick={exportDiagram}>Download</a>
                   }
@@ -133,7 +176,7 @@ export default class PropertiesView extends Component {
   }
 }
 
-/// Component das propriedades do elemento
+/// [WI15141] Component das propriedades do elemento
 function ElementProperties(props) {
   let {
     element,
@@ -144,14 +187,14 @@ function ElementProperties(props) {
     element = element.labelTarget;
   }
 
-  /// Atualiza o nome do objeto selecionado
+  /// [WI15141] Atualiza o nome do objeto selecionado
   function updateName(name) {
     const modeling = modeler.get('modeling');
 
     modeling.updateLabel(element, name);
   }
 
-  /// Atualiza a descrição do objeto selecionado
+  /// [WI15141] Atualiza a descrição do objeto selecionado
   function updateDescription(description) {
     const modeling = modeler.get('modeling');
 
@@ -160,7 +203,7 @@ function ElementProperties(props) {
     });
   }
 
-  /// Atualiza o comando do objeto selecionado
+  /// [WI15141] Atualiza o comando do objeto selecionado
   function updateBusinessRule(description) { 
     const modeling = modeler.get('modeling');
 
@@ -170,7 +213,7 @@ function ElementProperties(props) {
   }
 
   
-  /// Faz da tarefa selecionada uma tarefa de serviço
+  /// [WI15141] Faz da tarefa selecionada uma tarefa de serviço
   function makeServiceTask(name) {
     const bpmnReplace = modeler.get('bpmnReplace');
 
@@ -179,10 +222,10 @@ function ElementProperties(props) {
     });
   }
 
-  /// Não remover inicializadores, eles definem o tipo de dado original da variável.
+  /// [WI15141] Não remover inicializadores, eles definem o tipo de dado original da variável.
   let txtName = '', txtDescription = '', txtBusinessRule = '';
 
-  /// Salva os valores nos campos correspondentes, SE o tamanho da variável for maior que 0,
+  /// [WI15141] Salva os valores nos campos correspondentes, SE o tamanho da variável for maior que 0,
   /// o que simboliza uma edição no campo.
   function salvar() {
     if (txtName.length > 0) {
@@ -198,7 +241,7 @@ function ElementProperties(props) {
     }
   }
 
-  /// Retorna o HTML do component
+  /// [WI15141] Retorna o HTML do component
   return (
     <div id="elementProperties" className="element-properties popup" key={ element.id }>    
       <div className="popup_inner">
@@ -212,6 +255,7 @@ function ElementProperties(props) {
           <label>Tarefa</label>
           <div>
             <input input={ txtName } 
+                    className="input"
                     placeholder={ element.businessObject.name }
                     onChange={ (event) => {
                       txtName = event.target.value;
@@ -219,12 +263,13 @@ function ElementProperties(props) {
           </div>
         </div>
 
-        { /* Campo: descrição */
+        { /* [WI15141] Campo: descrição */
           is(element, 'custom:descriptionHolder') &&
             <div className='field'>
               <label>Descrição</label>
               <div>
                 <input  input= { txtDescription } 
+                        className="input" 
                         placeholder={ element.businessObject.get('custom:description') } 
                         onChange={ (event) => {
                           txtDescription = event.target.value;
@@ -233,12 +278,12 @@ function ElementProperties(props) {
             </div>
         }
 
-        { /* Campo: comando */
+        { /* [WI15141] Campo: comando */
           is(element, 'custom:businessRuleHolder') &&
             <div className='field'>
               <label>Comando</label>
               <div>
-                  <textarea input= { txtBusinessRule } 
+                  <textarea input= { txtBusinessRule }
                             placeholder={ element.businessObject.get('custom:businessrule') } 
                             onChange={ (event) => {
                               txtBusinessRule = event.target.value;
@@ -256,7 +301,7 @@ function ElementProperties(props) {
           }
         </div>
 
-        {/* Evento que fecha o popup*/}
+        {/* [WI15141] Evento que fecha o popup*/}
         <button
           className="btnSalvar"
           onClick={() => {

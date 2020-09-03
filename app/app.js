@@ -4,8 +4,6 @@ import PropertiesPanel from './components/properties-panel';
 
 import customModdleExtension from './moddle/custom.json';
 
-import diagramXML from './diagram.bpmn';
-
 const $modelerContainer = document.querySelector('#modeler-container');
 const $propertiesContainer = document.querySelector('#properties-container');
 
@@ -24,4 +22,4 @@ const propertiesPanel = new PropertiesPanel({
   modeler
 });
 
-modeler.importXML(diagramXML);
+modeler.createDiagram();

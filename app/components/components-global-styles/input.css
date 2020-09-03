@@ -1,10 +1,20 @@
-input, textarea {
+.input, textarea {
     font-family: roboto, sans-serif;
     margin: 8px;
     border: 0px solid black;
-    padding: 7px 14px;
-    background: rgb(199, 206, 212);
+    padding: 8px;
+    background: rgb(224, 231, 238);
     box-shadow: none;
     border-radius: 8px;
     border-block-end-width: 2px;
+}
+
+.input-file {
+    border: 0px solid black;
+    padding: 8px;
+    margin: 8px;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 8px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }
