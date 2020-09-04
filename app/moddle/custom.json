@@ -4,26 +4,26 @@
   "associations": [],
   "types": [
     {
-      "name": "descriptionHolder",
+      "name": "descricaoHolder",
       "extends": [
         "bpmn:ServiceTask"
       ],
       "properties": [
         {
-          "name": "description",
+          "name": "descricao",
           "isAttr": true,
           "type": "String"
         }
       ]
     },
     {
-      "name": "businessRuleHolder",
+      "name": "regraNegocioHolder",
       "extends": [
         "bpmn:ServiceTask"
       ],
       "properties": [
         {
-          "name": "businessrule",
+          "name": "regraNegocio",
           "isAttr": true,
           "type": "String"
         }

@@ -2,8 +2,6 @@ import { is } from 'bpmn-js/lib/util/ModelUtil';
 
 import React, { Component } from 'react';
 
-import diagramXML from '../../diagram.bpmn';
-
 import './PropertiesView.css';
 
 /// CSS COMPONENTS
@@ -16,47 +14,69 @@ export default class PropertiesView extends Component {
     super(props);
 
     this.state = {
-      selectedElements: [],
-      element: null
+      ElementosSelecionados: [],
+      elemento: null
     };
+
   }
 
-  /// [WI15141] Evento proprio do reactJS.
-  /// Depois do construtor, ele é o proximo da fila de execução.
+  /**
+   * ## componentDidMount
+   * ReactJS Life-Cycle Functions
+   * Função que executa sempre que o component for carregado.
+   * Depois do construtor, ele é o proximo da fila de execução.
+   */
   componentDidMount() {
 
     const {
       modeler
     } = this.props;
 
-    /// [WI15141] Método do modeler provisionado pela bpmnjs
-    /// O primeiro parametro é o evento que será executado
-    /// O segundo parametro é o elemento retornado do evento
-    modeler.on('selection.changed', (pElemento) => {
-
-      /// Esse atributo element é padrão do modeler, não alterar.
+    /**
+     * ## ON 
+     * BPMNJS 2.0 Life-Cycle Functions
+     * 
+     * Evento chamado pelo modeler, 
+     * que possibilita executar comandos enquanto o elemento é manipulado na tela.
+     * 
+     * Sempre que o usuário mudar de objeto selecionado,
+     * é mudado o status dos atributos globais elementosSelecionados e elemento.
+     *
+     * @param {String} [pTipoEvento] Tipo de evento a ser executado.
+     * @param {Object} [pRespostaEvento] Resposta do evento executado.
+     */
+    modeler.on('selection.changed', (pEvento) => {
       const {
-        element
+        elemento
       } = this.state;
 
       this.setState({
-        selectedElements: pElemento.newSelection,
-        element: pElemento.newSelection[0]
+        ElementosSelecionados: pEvento.newSelection,
+        elemento: pEvento.newSelection[0]
       });
     });
 
-    /// [WI15141] Método do modeler provisionado pela bpmnjs
-    /// O primeiro parametro é o evento que será executado
-    /// O segundo parametro é o elemento retornado do evento
+    /**
+     * ## ON 
+     * BPMNJS 2.0 Life-Cycle Functions
+     * 
+     * Evento chamado pelo modelador, 
+     * que possibilita executar comandos enquanto o elemento é manipulado na tela.
+     * 
+     * Sempre que o usuário mudar de objeto ou o objeto
+     * é mudado o status dos atributos globais elementosSelecionados e elemento.
+     *
+     * @param {String} [pTipoEvento] Tipo de evento a ser executado.
+     * @param {Object} [pRespostaEvento] Resposta do evento executado.
+     */
     modeler.on('element.changed', (pElemento) => {
-
-      /// [WI15141] Esse atributo element é padrão do modeler, não alterar.
+      /// Esse atributo element é padrão do pElemento, não alterar.
       const {
         element
       } = pElemento;
 
       const {
-        element: currentElement
+        elemento: currentElement
       } = this.state;
 
       if (!currentElement) {
@@ -69,15 +89,26 @@ export default class PropertiesView extends Component {
           element
         });
       }
-
     });
+
   }
 
-  /// [WI15141] Função que renderiza o html da página conforme funcionalidades
+  /**
+   * ## render
+   * ReactJS Life-Cycle Functions
+   * 
+   * Função que renderiza o html da página conforme funcionalidades.
+   *
+   * @return {Object} Retorna o HTML para o frontend.
+   */
   render() {
 
-    /// [WI15141] Importa o diagrama
-    async function importDiagram() {   
+    /**
+     * ## importarDiagrama
+     * Função que importa o diagrama, 
+     * lê o arquivo selecionado pelo usuário e atribui ao modeler.
+     */
+    async function importarDiagrama() {   
       try {
 
         // Pega a referência do input pelo ID.
@@ -104,11 +135,16 @@ export default class PropertiesView extends Component {
       }
     }
 
-    /// [WI15141] Função para exportar o diagrama como xml.
-    async function exportDiagram() {
+    /**
+     * ## importarDiagrama
+     * Função para exportar o diagrama para o XML do BPMNJS,
+     * captura todos os elementos do modeler e converte em xml.
+     * @Referência https://upmostly.com/tutorials/react-onclick-event-handling-with-examples#:~:text=In React%2C the onClick handler,Function After Clicking a Button
+     */
+    async function exportarDiagrama() {
       try {
 
-        // [WI15141] Chama a função própria do modelador de bpmn, para montar o arquivo no padrão xml.
+        // Chama a função própria do modelador de bpmn, para montar o arquivo no padrão xml.
         var xml = await modeler.saveXML({ format: true });
 
         // Pega o Id do botão/link de download.
@@ -134,40 +170,39 @@ export default class PropertiesView extends Component {
     } = this.props;
 
     const {
-      selectedElements,
-      element
+      ElementosSelecionados,
+      elemento
     } = this.state;
 
-    /// [WI15141] HTML retornado, com os demais components
+    /// HTML retornado, com os demais components
     return (
       <div>
         {
-          selectedElements.length === 1
-            && <ElementProperties modeler={ modeler } element={ element } />
+          ElementosSelecionados.length === 1
+          && 
+          <ElementProperties modeler={ modeler } elemento={ elemento } />
         }
 
         {
-          selectedElements.length === 0
+          ElementosSelecionados.length === 0
             &&  <div>
                   {
                     <input  id="uploadFile"
                             className="input-file" type="file" name="my_file"
                             onChange={ () => {
-                              importDiagram();
+                              importarDiagrama();
                             }} />
                   }
 
                   {
-                    /// [WI15141] Não use exportDiagram() porque o reactjs não reconhece os ().
-                    /// https://upmostly.com/tutorials/react-onclick-event-handling-with-examples#:~:text=In React%2C the onClick handler,Function After Clicking a Button
-                    <a className="button" id="btnDownload" onClick={exportDiagram}>Download</a>
+                    <a className="button" id="btnDownload" onClick={exportarDiagrama}>Download</a>
                   }
                   <span>Selecione um elemento para edita-lo.</span>
                 </div>
         }
 
         {
-          selectedElements.length > 1
+          ElementosSelecionados.length > 1
             && <span>Selecione apenas um elemento por vez.</span>
         }
 
@@ -176,117 +211,144 @@ export default class PropertiesView extends Component {
   }
 }
 
-/// [WI15141] Component das propriedades do elemento
+/**
+ * ## ElementProperties
+ * Component das propriedades do elemento.
+ * captura todos os elementos do modeler e converte em xml.
+ * @param {Object} [props] Paramêtros do component principal agrupados em um objeto.
+ * @param {Var} [props.elemento] elemento selecionado pelo usuário.
+ * @param {Var} [props.modeler] Modeler do BPMNJS.
+ */
 function ElementProperties(props) {
   let {
-    element,
+    elemento,
     modeler
   } = props;
 
-  if (element.labelTarget) {
-    element = element.labelTarget;
+  if (elemento.labelTarget) {
+    elemento = elemento.labelTarget;
   }
 
-  /// [WI15141] Atualiza o nome do objeto selecionado
-  function updateName(name) {
+  /**
+   * ## atualizarNome
+   * Atualiza o nome do objeto selecionado.
+   * @param {String} [name] Nome do elemento.
+   */
+  function atualizarNome(name) {
     const modeling = modeler.get('modeling');
-
-    modeling.updateLabel(element, name);
+    modeling.updateLabel(elemento, name);
   }
 
-  /// [WI15141] Atualiza a descrição do objeto selecionado
-  function updateDescription(description) {
+  /**
+   * ## atualizarDescricao
+   * Atualiza a descrição do objeto selecionado.
+   * @param {String} [pDescricao] Nome do elemento.
+   */
+  function atualizarDescricao(pDescricao) {
     const modeling = modeler.get('modeling');
 
-    modeling.updateProperties(element, {
-      'custom:description': description
+    // Atualiza as propriedades individuais do elemento, com base no campo editado.
+    modeling.updateProperties(elemento, {
+      'custom:descricao': pDescricao
     });
   }
 
-  /// [WI15141] Atualiza o comando do objeto selecionado
-  function updateBusinessRule(description) { 
+  /**
+   * ## atualizarRegraNegocio
+   * Atualiza a regra negócio do objeto selecionado.
+   * @param {String} [pRegraNegocio] Nome do elemento.
+   */
+  function atualizarRegraNegocio(pRegraNegocio) { 
     const modeling = modeler.get('modeling');
 
-    modeling.updateProperties(element, {
-      'custom:businessrule': description
+    // Atualiza as propriedades individuais do elemento, com base no campo editado.
+    modeling.updateProperties(elemento, {
+      'custom:regraNegocio': pRegraNegocio
     });
   }
 
   
-  /// [WI15141] Faz da tarefa selecionada uma tarefa de serviço
-  function makeServiceTask(name) {
+  /**
+   * ## makeServiceTask
+   * Faz da tarefa selecionada uma tarefa de serviço
+   */
+  function makeServiceTask() {
     const bpmnReplace = modeler.get('bpmnReplace');
-
-    bpmnReplace.replaceElement(element, {
+    
+    // Atualiza as propriedades individuais do elemento, com base no campo editado.
+    bpmnReplace.replaceElement(elemento, {
       type: 'bpmn:ServiceTask'
     });
   }
 
-  /// [WI15141] Não remover inicializadores, eles definem o tipo de dado original da variável.
-  let txtName = '', txtDescription = '', txtBusinessRule = '';
+  /// Não remover inicializadores, eles definem o tipo de dado original da variável.
+  let txtNome = '', txtDescricao = '', txtRegraNegocio = '';
 
-  /// [WI15141] Salva os valores nos campos correspondentes, SE o tamanho da variável for maior que 0,
-  /// o que simboliza uma edição no campo.
-  function salvar() {
-    if (txtName.length > 0) {
-      updateName(txtName);
+  /**
+   * ## salvarAlteracoes
+   * Salva os valores nos campos correspondentes, SE o tamanho da variável for maior que 0,
+   * o que simboliza uma edição no campo.
+   */
+  function salvarAlteracoes() {
+    if (txtNome.length > 0) {
+      atualizarNome(txtNome);
     }
 
-    if (txtDescription.length > 0) {
-      updateDescription(txtDescription);
+    if (txtDescricao.length > 0) {
+      atualizarDescricao(txtDescricao);
     }
 
-    if (txtBusinessRule.length > 0) {
-      updateBusinessRule(txtBusinessRule);
+    if (txtRegraNegocio.length > 0) {
+      atualizarRegraNegocio(txtRegraNegocio);
     }
   }
 
-  /// [WI15141] Retorna o HTML do component
+  /// Retorna o HTML do component.
   return (
-    <div id="elementProperties" className="element-properties popup" key={ element.id }>    
+    <div id="elementoProperties" className="elemento-properties popup" key={ elemento.id }>    
       <div className="popup_inner">
         {/*<div>
           <label>id</label>
-          <span>{ element.id }</span>
+          <span>{ elemento.id }</span>
         </div>*/}
         
         { /* Campo: titulo da tarefa */ }
         <div className="field">
           <label>Tarefa</label>
           <div>
-            <input input={ txtName } 
+            <input input={ txtNome } 
                     className="input"
-                    placeholder={ element.businessObject.name }
+                    placeholder={ elemento.businessObject.name }
                     onChange={ (event) => {
-                      txtName = event.target.value;
+                      txtNome = event.target.value;
                     }} />
           </div>
         </div>
 
-        { /* [WI15141] Campo: descrição */
-          is(element, 'custom:descriptionHolder') &&
+        { /* Campo: descrição */
+          is(elemento, 'custom:descricaoHolder') &&
             <div className='field'>
               <label>Descrição</label>
               <div>
-                <input  input= { txtDescription } 
+                <input  input= { txtDescricao } 
                         className="input" 
-                        placeholder={ element.businessObject.get('custom:description') } 
+                        placeholder={ elemento.businessObject.get('custom:descricao') } 
                         onChange={ (event) => {
-                          txtDescription = event.target.value;
+                          txtDescricao = event.target.value;
                         }} />
               </div>
             </div>
         }
 
-        { /* [WI15141] Campo: comando */
-          is(element, 'custom:businessRuleHolder') &&
+        { /* Campo: comando */
+          is(elemento, 'custom:regraNegocioHolder') &&
             <div className='field'>
               <label>Comando</label>
               <div>
-                  <textarea input= { txtBusinessRule }
-                            placeholder={ element.businessObject.get('custom:businessrule') } 
+                  <textarea input= { txtRegraNegocio }
+                            placeholder={ elemento.businessObject.get('custom:regraNegocio') } 
                             onChange={ (event) => {
-                              txtBusinessRule = event.target.value;
+                              txtRegraNegocio = event.target.value;
                             }} />
               </div>
             </div>
@@ -295,25 +357,25 @@ function ElementProperties(props) {
         <div className='field'>
           <label>Ações</label>
           {
-            is(element, 'bpmn:Task') && !is(element, 'bpmn:ServiceTask') &&
+            is(elemento, 'bpmn:Task') && !is(elemento, 'bpmn:ServiceTask') &&
               <button className="btnTarefaParaServico" 
                       onClick={ makeServiceTask }>Fazer desta tarefa um serviço</button>
           }
         </div>
 
-        {/* [WI15141] Evento que fecha o popup*/}
+        {/* Evento que fecha o popup*/}
         <button
           className="btnSalvar"
           onClick={() => {
-            var x = document.getElementById("elementProperties");
+            var x = document.getElementById("elementoProperties");
             x.style.display = "none";
-            salvar();
+            salvarAlteracoes();
           }}> Salvar
         </button>
 
         <button
           onClick={() => {
-            var x = document.getElementById("elementProperties");
+            var x = document.getElementById("elementoProperties");
             x.style.display = "none";
           }}> Fechar
         </button>
