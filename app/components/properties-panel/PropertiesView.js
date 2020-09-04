@@ -1,4 +1,5 @@
 import { is } from 'bpmn-js/lib/util/ModelUtil';
+import KeyboardEventHandler from 'react-keyboard-event-handler';
 
 import React, { Component } from 'react';
 
@@ -10,19 +11,20 @@ import '../components-global-styles/input.css';
 
 export default class PropertiesView extends Component {
 
+
   constructor(props) {
     super(props);
 
     this.state = {
+      blnAbrirPropriedades: false,
       lstElementosSelecionados: [],
       objElemento: null
     };
-
   }
 
   /**
    * ## componentDidMount
-   * ReactJS Life-Cycle Functions
+   * ReactJS Life-Cycle Functions.
    * Função que executa sempre que o component for carregado.
    * Depois do construtor, ele é o proximo da fila de execução.
    */
@@ -34,7 +36,7 @@ export default class PropertiesView extends Component {
 
     /**
      * ## ON 
-     * BPMNJS 2.0 Life-Cycle Functions
+     * BPMNJS 2.0 Life-Cycle Functions.
      * 
      * Evento chamado pelo modeler, 
      * que possibilita executar comandos enquanto o elemento é manipulado na tela.
@@ -58,7 +60,7 @@ export default class PropertiesView extends Component {
 
     /**
      * ## ON 
-     * BPMNJS 2.0 Life-Cycle Functions
+     * BPMNJS 2.0 Life-Cycle Functions.
      * 
      * Evento chamado pelo modelador, 
      * que possibilita executar comandos enquanto o elemento é manipulado na tela.
@@ -83,7 +85,7 @@ export default class PropertiesView extends Component {
         return;
       }
 
-      /// Atualiza o panel, se o elemento selecionado atualmente mudar
+      /// Atualiza o panel, se o elemento selecionado atualmente mudar.
       if (element.id === currentElement.id) {
         this.setState({
           element
@@ -95,7 +97,7 @@ export default class PropertiesView extends Component {
 
   /**
    * ## render
-   * ReactJS Life-Cycle Functions
+   * ReactJS Life-Cycle Functions.
    * 
    * Função que renderiza o html da página conforme funcionalidades.
    *
@@ -119,10 +121,11 @@ export default class PropertiesView extends Component {
         
         // Faz o leitor carregar todo o arquivo e ao fim lê os dados do arquivo.
         reader.onloadend = function(event) {
-          // captura o arquivo como texto
+
+          // captura o arquivo como texto.
           var text = event.target.result;
           
-          // Adiciona ele no modelador
+          // Adiciona ele no modelador.
           modeler.importXML(text);
         }
 
@@ -170,40 +173,65 @@ export default class PropertiesView extends Component {
     } = this.props;
 
     const {
+      blnAbrirPropriedades,
       lstElementosSelecionados,
       objElemento
     } = this.state;
 
-    // HTML retornado, com os demais components
+    // HTML retornado, com os demais components.
     return (
       <div>
         {
-          lstElementosSelecionados.length === 1
-          && 
-          <ElementProperties modeler={ modeler } objElemento={ objElemento } />
+          /* Detecta as teclas precionadas. */
+          <KeyboardEventHandler
+            handleKeys={['ctrl + space']}
+            onKeyEvent={(key, e) => {
+              // Ativa ou desativa a 
+              if (lstElementosSelecionados.length === 1 && !blnAbrirPropriedades) {
+                this.setState({blnAbrirPropriedades: true});
+              } else {
+                this.setState({blnAbrirPropriedades: false});
+              }
+            }} />
         }
 
         {
-          lstElementosSelecionados.length === 0
-            &&  <div>
-                  {
-                    <input  id="btnUpload"
-                            className="input-file" type="file" name="my_file"
-                            onChange={ () => {
-                              importarDiagrama();
-                            }} />
-                  }
-
-                  {
-                    <a className="button" id="btnDownload" onClick={exportarDiagrama}>Download</a>
-                  }
-                  <span>Selecione um elemento para edita-lo.</span>
-                </div>
+          /* Abre as propriedades do elemento. */
+          blnAbrirPropriedades && 
+          <ElementProperties 
+            modeler={ modeler } 
+            objElemento={ objElemento } />
         }
 
         {
-          lstElementosSelecionados.length > 1
-            && <span>Selecione apenas um elemento por vez.</span>
+          /* Instruções para o usuário. */
+          lstElementosSelecionados.length === 1 &&
+          <span>Pressione: <b>ctrl + espaço</b> para editar o elemento.</span>
+        }
+
+        {
+          /* Instruções para o usuário + import e export de diagramas. */
+          lstElementosSelecionados.length === 0 && 
+          <div>
+            {
+              <input  id="btnUpload"
+                      className="input-file" type="file" name="my_file"
+                      onChange={ () => {
+                        importarDiagrama();
+                      }} />
+            }
+
+            {
+              <a className="button" id="btnDownload" onClick={exportarDiagrama}>Download</a>
+            }
+            <span>Selecione um elemento e pressione: <b>ctrl + espaço</b> para edita-lo.</span>
+          </div>
+        }
+
+        {
+          /* Instruções para o usuário. */
+          lstElementosSelecionados.length > 1 && 
+          <span>Selecione apenas um elemento por vez.</span>
         }
 
       </div>
@@ -270,7 +298,7 @@ function ElementProperties(props) {
   
   /**
    * ## makeServiceTask
-   * Faz da tarefa selecionada uma tarefa de serviço
+   * Faz da tarefa selecionada uma tarefa de serviço.
    */
   function makeServiceTask() {
     const bpmnReplace = modeler.get('bpmnReplace');
@@ -312,7 +340,7 @@ function ElementProperties(props) {
           <span>{ objElemento.id }</span>
         </div>*/}
         
-        { /* Campo: titulo da tarefa */ }
+        { /* Campo: titulo da tarefa. */ }
         <div className="field">
           <label>Tarefa</label>
           <div>
@@ -325,7 +353,7 @@ function ElementProperties(props) {
           </div>
         </div>
 
-        { /* Campo: descrição */
+        { /* Campo: descrição. */
           is(objElemento, 'custom:descricaoHolder') &&
             <div className='field'>
               <label>Descrição</label>
@@ -340,7 +368,7 @@ function ElementProperties(props) {
             </div>
         }
 
-        { /* Campo: comando */
+        { /* Campo: comando. */
           is(objElemento, 'custom:regraNegocioHolder') &&
             <div className='field'>
               <label>Comando</label>
@@ -363,7 +391,7 @@ function ElementProperties(props) {
           }
         </div>
 
-        {/* Evento que fecha o popup*/}
+        {/* Evento que fecha o popup. */}
         <button
           className="btnSalvar"
           onClick={() => {
