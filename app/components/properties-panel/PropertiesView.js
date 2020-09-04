@@ -14,8 +14,8 @@ export default class PropertiesView extends Component {
     super(props);
 
     this.state = {
-      ElementosSelecionados: [],
-      elemento: null
+      lstElementosSelecionados: [],
+      objElemento: null
     };
 
   }
@@ -40,19 +40,19 @@ export default class PropertiesView extends Component {
      * que possibilita executar comandos enquanto o elemento é manipulado na tela.
      * 
      * Sempre que o usuário mudar de objeto selecionado,
-     * é mudado o status dos atributos globais elementosSelecionados e elemento.
+     * é mudado o status dos atributos globais lstElementosSelecionados e elemento.
      *
      * @param {String} [pTipoEvento] Tipo de evento a ser executado.
      * @param {Object} [pRespostaEvento] Resposta do evento executado.
      */
     modeler.on('selection.changed', (pEvento) => {
       const {
-        elemento
+        objElemento
       } = this.state;
 
       this.setState({
-        ElementosSelecionados: pEvento.newSelection,
-        elemento: pEvento.newSelection[0]
+        lstElementosSelecionados: pEvento.newSelection,
+        objElemento: pEvento.newSelection[0]
       });
     });
 
@@ -64,19 +64,19 @@ export default class PropertiesView extends Component {
      * que possibilita executar comandos enquanto o elemento é manipulado na tela.
      * 
      * Sempre que o usuário mudar de objeto ou o objeto
-     * é mudado o status dos atributos globais elementosSelecionados e elemento.
+     * é mudado o status dos atributos globais lstElementosSelecionados e elemento.
      *
      * @param {String} [pTipoEvento] Tipo de evento a ser executado.
      * @param {Object} [pRespostaEvento] Resposta do evento executado.
      */
     modeler.on('element.changed', (pElemento) => {
-      /// Esse atributo element é padrão do pElemento, não alterar.
+      // Esse atributo element é padrão do pElemento, não alterar.
       const {
         element
       } = pElemento;
 
       const {
-        elemento: currentElement
+        objElemento: currentElement
       } = this.state;
 
       if (!currentElement) {
@@ -112,7 +112,7 @@ export default class PropertiesView extends Component {
       try {
 
         // Pega a referência do input pelo ID.
-        var uploadedFile = document.getElementById('uploadFile');
+        var uploadedFile = document.getElementById('btnUpload');
 
         var file = uploadedFile.files[0], // Pega o dado "cru" do arquivo.
             reader = new FileReader(); // Cria um leitor de arquivos.
@@ -129,9 +129,9 @@ export default class PropertiesView extends Component {
         // Lê o arquivo "cru" como texto.
         reader.readAsText(file);
 
-      } catch (err) {
-        alert("Não foi possível, salvar o diagrama BPMN 2.0, situação encontrada: ", err);
-        console.error('could not save BPMN 2.0 diagram', err);
+      } catch (pErro) {
+        alert("Não foi possível, importar o diagrama BPMN 2.0, situação encontrada: ", pErro);
+        console.error('Não pudemos importar o seu BPMN 2.0. Situação encontrada: ', pErro);
       }
     }
 
@@ -159,9 +159,9 @@ export default class PropertiesView extends Component {
         // Define o nome do arquivo que será baixado.
         btnDownload.download = 'diagram.bpmn';
 
-      } catch (err) {
-        alert("Não foi possível, salvar o diagrama BPMN 2.0, situação encontrada: ", err);
-        console.error('could not save BPMN 2.0 diagram', err);
+      } catch (pErro) {
+        alert("Não foi possível, exportar o diagrama BPMN 2.0, situação encontrada: ", pErro);
+        console.error('Não pudemos exportar o seu BPMN 2.0. Situação encontrada: ', pErro);
       }
     }
 
@@ -170,24 +170,24 @@ export default class PropertiesView extends Component {
     } = this.props;
 
     const {
-      ElementosSelecionados,
-      elemento
+      lstElementosSelecionados,
+      objElemento
     } = this.state;
 
-    /// HTML retornado, com os demais components
+    // HTML retornado, com os demais components
     return (
       <div>
         {
-          ElementosSelecionados.length === 1
+          lstElementosSelecionados.length === 1
           && 
-          <ElementProperties modeler={ modeler } elemento={ elemento } />
+          <ElementProperties modeler={ modeler } objElemento={ objElemento } />
         }
 
         {
-          ElementosSelecionados.length === 0
+          lstElementosSelecionados.length === 0
             &&  <div>
                   {
-                    <input  id="uploadFile"
+                    <input  id="btnUpload"
                             className="input-file" type="file" name="my_file"
                             onChange={ () => {
                               importarDiagrama();
@@ -202,7 +202,7 @@ export default class PropertiesView extends Component {
         }
 
         {
-          ElementosSelecionados.length > 1
+          lstElementosSelecionados.length > 1
             && <span>Selecione apenas um elemento por vez.</span>
         }
 
@@ -216,27 +216,27 @@ export default class PropertiesView extends Component {
  * Component das propriedades do elemento.
  * captura todos os elementos do modeler e converte em xml.
  * @param {Object} [props] Paramêtros do component principal agrupados em um objeto.
- * @param {Var} [props.elemento] elemento selecionado pelo usuário.
+ * @param {Var} [props.objElemento] objElemento selecionado pelo usuário.
  * @param {Var} [props.modeler] Modeler do BPMNJS.
  */
 function ElementProperties(props) {
   let {
-    elemento,
+    objElemento,
     modeler
   } = props;
 
-  if (elemento.labelTarget) {
-    elemento = elemento.labelTarget;
+  if (objElemento.labelTarget) {
+    objElemento = objElemento.labelTarget;
   }
 
   /**
    * ## atualizarNome
    * Atualiza o nome do objeto selecionado.
-   * @param {String} [name] Nome do elemento.
+   * @param {String} [name] Nome do objElemento.
    */
   function atualizarNome(name) {
     const modeling = modeler.get('modeling');
-    modeling.updateLabel(elemento, name);
+    modeling.updateLabel(objElemento, name);
   }
 
   /**
@@ -248,7 +248,7 @@ function ElementProperties(props) {
     const modeling = modeler.get('modeling');
 
     // Atualiza as propriedades individuais do elemento, com base no campo editado.
-    modeling.updateProperties(elemento, {
+    modeling.updateProperties(objElemento, {
       'custom:descricao': pDescricao
     });
   }
@@ -262,7 +262,7 @@ function ElementProperties(props) {
     const modeling = modeler.get('modeling');
 
     // Atualiza as propriedades individuais do elemento, com base no campo editado.
-    modeling.updateProperties(elemento, {
+    modeling.updateProperties(objElemento, {
       'custom:regraNegocio': pRegraNegocio
     });
   }
@@ -276,12 +276,12 @@ function ElementProperties(props) {
     const bpmnReplace = modeler.get('bpmnReplace');
     
     // Atualiza as propriedades individuais do elemento, com base no campo editado.
-    bpmnReplace.replaceElement(elemento, {
+    bpmnReplace.replaceElement(objElemento, {
       type: 'bpmn:ServiceTask'
     });
   }
 
-  /// Não remover inicializadores, eles definem o tipo de dado original da variável.
+  // Não remover inicializadores, eles definem o tipo de dado original da variável.
   let txtNome = '', txtDescricao = '', txtRegraNegocio = '';
 
   /**
@@ -303,13 +303,13 @@ function ElementProperties(props) {
     }
   }
 
-  /// Retorna o HTML do component.
+  // Retorna o HTML do component.
   return (
-    <div id="elementoProperties" className="elemento-properties popup" key={ elemento.id }>    
+    <div id="elementoProperties" className="elemento-properties popup" key={ objElemento.id }>    
       <div className="popup_inner">
         {/*<div>
           <label>id</label>
-          <span>{ elemento.id }</span>
+          <span>{ objElemento.id }</span>
         </div>*/}
         
         { /* Campo: titulo da tarefa */ }
@@ -318,7 +318,7 @@ function ElementProperties(props) {
           <div>
             <input input={ txtNome } 
                     className="input"
-                    placeholder={ elemento.businessObject.name }
+                    placeholder={ objElemento.businessObject.name }
                     onChange={ (event) => {
                       txtNome = event.target.value;
                     }} />
@@ -326,13 +326,13 @@ function ElementProperties(props) {
         </div>
 
         { /* Campo: descrição */
-          is(elemento, 'custom:descricaoHolder') &&
+          is(objElemento, 'custom:descricaoHolder') &&
             <div className='field'>
               <label>Descrição</label>
               <div>
                 <input  input= { txtDescricao } 
                         className="input" 
-                        placeholder={ elemento.businessObject.get('custom:descricao') } 
+                        placeholder={ objElemento.businessObject.get('custom:descricao') } 
                         onChange={ (event) => {
                           txtDescricao = event.target.value;
                         }} />
@@ -341,12 +341,12 @@ function ElementProperties(props) {
         }
 
         { /* Campo: comando */
-          is(elemento, 'custom:regraNegocioHolder') &&
+          is(objElemento, 'custom:regraNegocioHolder') &&
             <div className='field'>
               <label>Comando</label>
               <div>
                   <textarea input= { txtRegraNegocio }
-                            placeholder={ elemento.businessObject.get('custom:regraNegocio') } 
+                            placeholder={ objElemento.businessObject.get('custom:regraNegocio') } 
                             onChange={ (event) => {
                               txtRegraNegocio = event.target.value;
                             }} />
@@ -357,7 +357,7 @@ function ElementProperties(props) {
         <div className='field'>
           <label>Ações</label>
           {
-            is(elemento, 'bpmn:Task') && !is(elemento, 'bpmn:ServiceTask') &&
+            is(objElemento, 'bpmn:Task') && !is(objElemento, 'bpmn:ServiceTask') &&
               <button className="btnTarefaParaServico" 
                       onClick={ makeServiceTask }>Fazer desta tarefa um serviço</button>
           }
