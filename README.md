@@ -2,8 +2,13 @@
 
 This example demonstrates a custom properties panel for [bpmn-js](https://github.com/bpmn-io/bpmn-js) written in [React](https://reactjs.org/).
 
+- The start page.
 ![Start](./resources/tela_inicio.png)
+
+- Selecting a object.
 ![Selecting a object](./resources/selecionar_objeto.png)
+
+- Some properties from selected object.
 ![Selected object](./resources/objeto_selecionado.png)
 
 ## About
@@ -110,6 +115,8 @@ MIT
 - 0.1
 Update this function saveXML() on node_modules\bpmn-js\lib\Viewer.js
 With return and done function, as the same we have here, if you want to export the xml.
+
+```js
 /**
  * Export the currently displayed BPMN 2.0 diagram as
  * a BPMN 2.0 XML document.
@@ -175,3 +182,4 @@ Viewer.prototype.saveXML = function(options, done) {
   });
 
 };
+```
