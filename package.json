@@ -1,18 +1,18 @@
 {
   "name": "bpmn-js-example-react-properties-panel",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A custom react properties panel example",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --open --watch"
   },
   "author": {
-    "name": "Niklas Kiefer",
-    "url": "https://github.com/pinussilvestrus"
+    "name": "Jeferson Eduardo Guido",
+    "url": "https://github.com/bradoqguido"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bpmn-io/bpmn-js-example-react-properties-panel"
+    "url": "https://github.com/Bradoqguido/bpmnjs-reactjs-properties-panel"
   },
   "license": "MIT",
   "devDependencies": {
