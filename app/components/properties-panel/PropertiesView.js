@@ -182,12 +182,13 @@ export default class PropertiesView extends Component {
     return (
       <div>
         {
+          lstElementosSelecionados.length === 1 &&
           /* Detecta as teclas precionadas. */
           <KeyboardEventHandler
             handleKeys={['ctrl + space']}
             onKeyEvent={(key, e) => {
               // Ativa ou desativa a 
-              if (lstElementosSelecionados.length === 1 && !blnAbrirPropriedades) {
+              if (!blnAbrirPropriedades) {
                 this.setState({blnAbrirPropriedades: true});
               } else {
                 this.setState({blnAbrirPropriedades: false});
