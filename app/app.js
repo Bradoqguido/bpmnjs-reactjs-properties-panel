@@ -1,6 +1,6 @@
 import Modeler from 'bpmn-js/lib/Modeler';
 
-import PropertiesPanel from './components/properties-panel';
+import PropertiesPanel from './components/properties-panel-component';
 
 import customModdleExtension from './moddle/custom.json';
 

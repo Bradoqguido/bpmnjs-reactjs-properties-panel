@@ -1,20 +1,21 @@
-.input, textarea {
+.input,
+textarea {
     font-family: roboto, sans-serif;
     margin: 8px;
-    border: 0px solid black;
+    border: 0px solid var(--primary-dark);
     padding: 8px;
     background: rgb(224, 231, 238);
     box-shadow: none;
-    border-radius: 8px;
-    box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2), 0 3px 5px 0 rgba(0,0,0,0.19);
+    border-radius: 2px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 5px 0 rgba(0, 0, 0, 0.19);
 }
 
 .input-file {
-    border: 0px solid black;
+    border: 0px solid var(--primary-dark);
     padding: 8px;
     margin: 8px;
-    border-radius: 8px;
+    border-radius: 2px;
     text-align: center;
     text-decoration: none;
-    box-shadow: 0 4px 4px 0 rgba(0,0,0,0.2), 0 3px 5px 0 rgba(0,0,0,0.19);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 5px 0 rgba(0, 0, 0, 0.19);
 }
