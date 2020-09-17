@@ -2,7 +2,9 @@
 
 This example demonstrates a custom properties panel for [bpmn-js](https://github.com/bpmn-io/bpmn-js) written in [React](https://reactjs.org/).
 
-![Demo Screenshot](./resources/screenshot.png)
+![Start](./resources/tela_inicio.png)
+![Selecting a object](./resources/selecionar_objeto.png)
+![Selected object](./resources/objeto_selecionado.png)
 
 ## About
 
