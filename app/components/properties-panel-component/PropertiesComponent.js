@@ -8,6 +8,7 @@ import "./PropertiesComponent.css";
 /// CSS COMPONENTS
 import "../components-global-styles/button.css";
 import "../components-global-styles/input.css";
+import "../components-global-styles/popup.css";
 import "../components-global-styles/snackbar.css";
 
 export default class PropertiesComponent extends Component {
@@ -215,7 +216,7 @@ export default class PropertiesComponent extends Component {
               {
                 <input
                   id="btnUpload"
-                  className="input-file"
+                  className="input-file btnAbrirBPMN"
                   type="file"
                   name="my_file"
                   onChange={() => {
@@ -226,7 +227,7 @@ export default class PropertiesComponent extends Component {
 
               {
                 <a
-                  className="button"
+                  className="button btnDownload"
                   id="btnDownload"
                   onClick={exportarDiagrama}
                 >
@@ -243,9 +244,10 @@ export default class PropertiesComponent extends Component {
 
         {
           /* Instruções para o usuário. */
-          lstElementosSelecionados.length > 1 && (
-            <span>Selecione apenas um elemento por vez.</span>
-          )
+          lstElementosSelecionados.length > 1 &&
+            <div>
+              <span>Selecione apenas <b>um elemento</b> por vez.</span>
+            </div>
         }
       </div>
     );
@@ -441,7 +443,7 @@ function ElementProperties(props) {
             setTimeout(function () { x.className = x.className.replace("show", ""); }, 1500);
           }}
         >
-          Salvar
+          <b>Salvar</b>
         </button>
 
         {/* Snackbar */}

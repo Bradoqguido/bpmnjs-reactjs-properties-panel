@@ -1,6 +1,6 @@
 button,
 .button {
-    border: 0px solid var(--primary);
+    border: 0px solid var(--primary-dark);
     padding: 8px;
     margin: 8px;
     border-radius: 2px;

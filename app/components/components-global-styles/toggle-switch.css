@@ -17,7 +17,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--primary);
+  background-color: var(--primary-light);
   -webkit-transition: 0.4s;
   transition: 0.4s;
 }
@@ -35,11 +35,11 @@
 }
 
 input:checked+.slider {
-  background-color: var(--secundary-dark);
+  background-color: var(--secundary-light);
 }
 
 input:focus+.slider {
-  box-shadow: 0 0 1px var(--secundary-dark);
+  box-shadow: 0 0 1px var(--primary-light);
 }
 
 input:checked+.slider:before {

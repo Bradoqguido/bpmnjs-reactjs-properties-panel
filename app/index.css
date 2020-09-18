@@ -19,10 +19,15 @@ html {
 }
 
 :root {
-    --primary: #bdbdbd;
-    --primary-light: #efefef;
-    --primary-dark: #8d8d8d;
-    --secundary: #cfd8dc;
-    --secundary-light: #ffffff;
-    --secundary-dark: #9ea7aa;
+    --input: #ffffff;
+    --input-secundary: #000000;
+    
+    --primary: #000407;
+    --primary-light: #FAF9F9;
+    --primary-dark: #F2DA9D;
+    --secundary: #DDAA36;
+    --secundary-light: #CB8C35;
+    --secundary-dark: #03050F;
+
+    --erro: #b00020;
   }
